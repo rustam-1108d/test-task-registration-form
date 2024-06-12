@@ -220,9 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     setTimeout(() => {
       successMessage.style.display = 'none';
-    }, 2000);
+    }, 1000);
     setTimeout(() => {
       window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-    }, 3000);
+    }, 1500);
   });
 });
