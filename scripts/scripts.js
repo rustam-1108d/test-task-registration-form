@@ -118,33 +118,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const checkFormValidity = () => {
-    const isValid = [...form.elements].every((element) => {
-      if (element.tagName.toLowerCase() === 'button') return true; // пропустить кнопку
-      return element.classList.contains('valid');
-    });
-    submitButton.disabled = !isValid;
+  const validateAgeOnInput = () => {
+    if (!birthDay.value.trim()) {
+      return false;
+    }
+
+    const birthDate = new Date(birthDay.value);
+    const minDate = new Date('1900-01-01');
+    const today = new Date();
+    today.setHours(23, 59, 59);
+
+    if (birthDate < minDate || birthDate > today) {
+      return false;
+    }
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age -= 1;
+    }
+
+    if (age >= 18) {
+      return true;
+    }
+    return false;
   };
+
+  // const checkFormValidity = () => {
+  //   const isValid = [...form.elements].every((element) => {
+  //     if (element.tagName.toLowerCase() === 'button') return true; // пропустить кнопку
+  //     return element.classList.contains('valid');
+  //   });
+  //   submitButton.disabled = !isValid;
+  // };
 
   firstName.addEventListener('blur', () => {
     const emptyNameMsg = 'Введите Имя';
     const invalidNameMsg = 'Введите корректное Имя';
     validateField(firstName, namePattern, firstNameError, emptyNameMsg, invalidNameMsg);
-    checkFormValidity();
+    // checkFormValidity();
   });
 
   lastName.addEventListener('blur', () => {
     const emptyLastNameMsg = 'Введите Фамилию';
     const invalidLastNameMsg = 'Введите корректную Фамилию';
     validateField(lastName, namePattern, lastNameError, emptyLastNameMsg, invalidLastNameMsg);
-    checkFormValidity();
+    // checkFormValidity();
   });
 
   email.addEventListener('blur', () => {
     const emptyEmailMsg = 'Введите Email';
     const invalidEmailMsg = 'Введите корректный Email';
     validateField(email, emailPattern, emailError, emptyEmailMsg, invalidEmailMsg);
-    checkFormValidity();
+    // checkFormValidity();
   });
 
   password.addEventListener('focus', () => {
@@ -157,17 +183,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const invalidPassordMsg = 'Пароль не соответствует требованиям';
     validatePassword(password, passwordPattern, passwordError, emptyPasswordMsg, invalidPassordMsg);
     validatePasswordMatch();
-    checkFormValidity();
+    // checkFormValidity();
   });
 
   passwordConfirm.addEventListener('blur', () => {
     validatePasswordMatch();
-    checkFormValidity();
+    // checkFormValidity();
   });
 
   birthDay.addEventListener('blur', () => {
     validateAge();
-    checkFormValidity();
+    // checkFormValidity();
+  });
+
+  form.addEventListener('input', () => {
+    if (namePattern.test(firstName.value)
+    && namePattern.test(lastName.value)
+    && emailPattern.test(email.value)
+    && passwordPattern.test(password.value)
+    && (passwordConfirm.value === password.value)
+    && validateAgeOnInput()) {
+      form.classList.add('valid');
+      form.classList.remove('invalid');
+      submitButton.disabled = false;
+    } else {
+      form.classList.remove('valid');
+      form.classList.add('invalid');
+      submitButton.disabled = true;
+    }
   });
 
   form.addEventListener('submit', (event) => {
